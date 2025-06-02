@@ -18,17 +18,32 @@
   </div>
 
   <script src="https://telegram.org/js/games.js"></script>
-  <script>
+ <script>
+  // Проверяем, что игра открыта в Telegram WebApp
+  if (window.Telegram && Telegram.WebApp) {
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+    
     let score = 0;
+    const tapButton = document.getElementById('tapButton');
+    const scoreDisplay = document.getElementById('score');
 
     function tap() {
       score += 1;
-      document.getElementById("score").innerText = "Счет: " + score;
-      TelegramGameProxy.shareScore(score);
+      scoreDisplay.innerText = "Счет: " + score;
+      if (Telegram.WebApp.sendData) {
+        Telegram.WebApp.sendData(score.toString()); // Отправляем счет в бота
+      }
     }
 
-    Telegram.WebApp.ready();
-    Telegram.WebApp.expand();
-  </script>
+    tapButton.onclick = tap;
+  } else {
+    // Режим для браузера (тестирование)
+    document.getElementById('tapButton').onclick = function() {
+      score += 1;
+      document.getElementById('score').innerText = "Счет: " + score;
+    };
+  }
+</script>
 </body>
 </html>
